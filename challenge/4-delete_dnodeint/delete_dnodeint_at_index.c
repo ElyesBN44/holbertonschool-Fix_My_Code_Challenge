@@ -25,14 +25,19 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
     if (!current)
         return (-1);
 
-    /* Update surrounding nodes' pointers */
-    if (current->prev)
+    /* If deleting the head node */
+    if (current == *head) {
+        *head = current->next;
+        if (*head)
+            (*head)->prev = NULL;
+    } else {
+        /* Update previous node's next pointer */
         current->prev->next = current->next;
-    else
-        *head = current->next;  // Update head if deleting first node
-
-    if (current->next)
-        current->next->prev = current->prev;
+        
+        /* Update next node's prev pointer if it exists */
+        if (current->next)
+            current->next->prev = current->prev;
+    }
 
     free(current);
     return (1);

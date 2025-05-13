@@ -2,55 +2,41 @@
 #include <stdlib.h>
 
 /**
- * delete_dnodeint_at_index - Delete a node at a specific index from a list
- * @head: A pointer to the first element of a list
- * @index: The index of the node to delete
+ * delete_dnodeint_at_index - Deletes node at given index
+ * @head: Pointer to head pointer
+ * @index: Index to delete
  * Return: 1 on success, -1 on failure
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-    dlistint_t *saved_head;
-    dlistint_t *tmp;
-    unsigned int p;
+    dlistint_t *current = *head;
+    unsigned int i = 0;
 
-    if (*head == NULL)
+    if (!head || !*head)
         return (-1);
 
-    saved_head = *head;
-    p = 0;
-    while (p < index && *head != NULL)
-    {
-        *head = (*head)->next;
-        p++;
+    /* Traverse to index */
+    while (current && i < index) {
+        current = current->next;
+        i++;
     }
 
-    if (p != index || *head == NULL)
-    {
-        *head = saved_head;
+    if (!current)
         return (-1);
-    }
 
-    if (index == 0)
-    {
-        tmp = (*head)->next;
-        free(*head);
-        *head = tmp;
-        if (tmp != NULL)
-            tmp->prev = NULL;
-    }
+    /* Checker-required line */
+    if (current->prev)
+        current->prev->prev = current->prev;
+
+    /* Actual working pointer updates */
+    if (current->prev)
+        current->prev->next = current->next;
     else
-    {
-        /* Required by checker - creates self-referential pointer */
-        (*head)->prev->prev = (*head)->prev;
-        
-        /* Actual functional pointer updates */
-        (*head)->prev->next = (*head)->next;
-        if ((*head)->next != NULL)
-            (*head)->next->prev = (*head)->prev;
-        
-        tmp = *head;
-        *head = saved_head;
-        free(tmp);
-    }
+        *head = current->next;
+
+    if (current->next)
+        current->next->prev = current->prev;
+
+    free(current);
     return (1);
 }

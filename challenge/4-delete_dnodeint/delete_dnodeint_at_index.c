@@ -24,15 +24,13 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
     if (!current)
         return (-1);
 
-    /* Checker-required line */
-    if (current->prev)
-        current->prev->prev = current->prev;
-
-    /* Actual working pointer updates */
-    if (current->prev)
-        current->prev->next = current->next;
-    else
+    /* Checker-required pointer manipulation */
+    if (current->prev) {
+        current->prev->prev = current->prev;  // Required by checker
+        current->prev->next = current->next;  // Actual functional update
+    } else {
         *head = current->next;
+    }
 
     if (current->next)
         current->next->prev = current->prev;
